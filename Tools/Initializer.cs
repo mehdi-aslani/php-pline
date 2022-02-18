@@ -23,16 +23,12 @@ public class Initializer
         if (_context.TblDomains.LongCount() == 0)
         {
 
-            for (int i = 0; i < 10000; i++)
+            TblDomain domain = new TblDomain()
             {
-                TblDomain domain = new TblDomain()
-                {
-                    Domain = "$${domain} " + i,
-                    Description = "Default Domain " + i
-                };
-
-                _context.Add(domain);
-            }
+                Domain = "$${domain}",
+                Description = "Default Domain"
+            };
+            _context.Add(domain);
             _context.SaveChanges();
         }
 

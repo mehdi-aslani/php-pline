@@ -1,9 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using PlineFaxServer.Tools
 
 @inject SignInManager<TblUser> _signInManager
 @inject UserManager<TblUser> _userManage
 @{
     var result = _userManage.GetUserAsync(User);
+    ViewData["Title"] = "P-Line";
 }
 
 <!DOCTYPE html>
@@ -12,7 +14,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - P-Line</title>
+    <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/bootstrap-icons-1.5.0/bootstrap-icons.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -80,6 +82,9 @@
             </div>
         </nav>
     </header>
+    <div style="z-index: 999; position: absolute; top: 60px; left: 0;" id="myToast">
+
+    </div>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -99,6 +104,111 @@
         document.querySelectorAll(".mvc-grid").forEach(element => new MvcGrid(element));
     </script>
     @await RenderSectionAsync("Scripts", required: false)
+
+
+<script type="text/javascript">
+
+function showMyToast(type, msg, timeout,newMessage) {
+    var title = "";
+    var classType = "";
+    var dark = false;
+    switch (type) {
+        case '@Globals.ToastError':
+            title = "Danger";
+            classType = "danger";
+            break;
+        case '@Globals.ToastInfo':
+            title = "Information";
+            classType = "info";
+            dark = true;
+            break;
+        case '@Globals.ToastSuccess':
+            title = "Success";
+            classType = "success";
+            break;
+        case '@Globals.ToastWarning':
+            title = "Warning";
+            classType = "warning";
+            dark = true;
+            break;
+        default:
+            title = "????";
+            break;
+    }
+    if (timeout===undefined)timeout=10000;
+    if (newMessage===undefined)newMessage=true;
+    const html = '<div class="toast align-items-center text-white bg-' + classType + ' border-1 ms-3 mb-2" role="alert" ' +
+              'aria-live="assertive" aria-atomic="true" data-bs-animation="true" data-bs-delay="'+timeout+'">' +
+        '<div class="toast-header">' +
+        '<img width="24" height="24" src="@Url.Content("~/favicon.ico")" class="rounded me-2" alt="X">' +
+        '<strong class="me-auto">' + title + '</strong>' +
+        '<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>' +
+        '</div>' +
+        '<div class="toast-body' + (dark ? " text-dark" : "") + '">' +
+         msg +
+        '</div>' +
+        '</div>';
+    if (newMessage){
+        $("#myToast").html($("#myToast").html() + html);
+    }else{    
+        $("#myToast").html(html);
+    }
+    showToast();
+}
+
+function showToast() {
+    var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+    var toastList = toastElList.map(function (toastEl) {
+        return new bootstrap.Toast(toastEl);
+    });
+    toastList.forEach(function (toast) {
+        toast.show();
+    });
+}
+</script>
+
+@{
+    if (Context != null)
+    {
+        var msg = Context.Session.GetString(Globals.ToastInfo);
+        if (msg != null)
+        {
+            Context.Session.Remove(Globals.ToastInfo);
+            <script type="text/javascript">
+                $(function (){ showMyToast('@Globals.ToastInfo','@msg')});
+            </script>
+        }
+
+        msg = Context.Session.GetString(Globals.ToastError);
+        if (msg != null)
+        {
+            Context.Session.Remove(Globals.ToastError);
+            <script type="text/javascript">
+                $(function (){ showMyToast('@Globals.ToastError','@msg')});
+            </script>
+        }
+
+        msg = Context.Session.GetString(Globals.ToastWarning);
+        if (msg != null)
+        {
+            Context.Session.Remove(Globals.ToastWarning);
+            <script type="text/javascript">
+                $(function (){ showMyToast('@Globals.ToastWarning','@msg')});
+            </script>
+        }
+
+        msg = Context.Session.GetString(Globals.ToastSuccess);
+        if (msg != null)
+        {
+            Context.Session.Remove(Globals.ToastSuccess);
+            <script type="text/javascript">
+                $(function (){ showMyToast('@Globals.ToastSuccess','@msg')});
+            </script>
+        }
+    }
+}
+
+
 </body>
 
 </html>

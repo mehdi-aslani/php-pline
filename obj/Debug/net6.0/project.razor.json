@@ -16363,11 +16363,6 @@
       "FileKind": "mvc"
     },
     {
-      "FilePath": "/home/aslani/Desktop/pline/Views/Domain/Delete.cshtml",
-      "TargetPath": "Views\\Domain\\Delete.cshtml",
-      "FileKind": "mvc"
-    },
-    {
       "FilePath": "/home/aslani/Desktop/pline/Views/Domain/Details.cshtml",
       "TargetPath": "Views\\Domain\\Details.cshtml",
       "FileKind": "mvc"

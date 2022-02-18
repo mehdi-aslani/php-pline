@@ -84,16 +84,14 @@ body {
   color: #f8f9fa !important;
 }
 
-
 .table-secondary {
-  --bs-table-bg: #cdcdcd;
-  --bs-table-striped-bg: #d7d8da;
+  --bs-table-bg: #bebebe;
+  --bs-table-striped-bg: #ffffff;
   --bs-table-striped-color: #000;
-  --bs-table-active-bg: #cbccce;
+  --bs-table-active-bg: #ffffff;
   --bs-table-active-color: #000;
-  --bs-table-hover-bg: #d1d2d4;
+  --bs-table-hover-bg: #ffffff;
   --bs-table-hover-color: #000;
   color: #000;
-  border-color: #cbccce;
+  border-color: #ffffff;
 }
-

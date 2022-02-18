@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using pline.Data;
 using pline.Models;
+using PlineFaxServer.Tools;
 
 namespace pline.Controllers;
 
@@ -199,6 +200,7 @@ public class UsersController : Controller
                 var user = await _userManager.FindByNameAsync(login.Username);
                 if (user.Enable)
                 {
+                    HttpContext.Session.SetString(Globals.ToastInfo, "Welcome to P-Line VoIP Server");
                     return RedirectToAction("Index", "Home");
                 }
                 else

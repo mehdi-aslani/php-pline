@@ -15,18 +15,14 @@ namespace pline.Controllers
             _context = context;
         }
 
-
-        // GET: Domain
         public IActionResult Index()
         {
             // return View(await _context.TblDomains.ToListAsync());
-            //return View(_context.Set<TblDomain>());
             if (HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 return PartialView("_IndexGrid", _context.Set<TblDomain>());
             return View();
         }
 
-        // GET: Domain/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -44,21 +40,23 @@ namespace pline.Controllers
             return View(tblDomain);
         }
 
-        // GET: Domain/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Domain/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Domain,Description")] TblDomain tblDomain)
         {
             if (ModelState.IsValid)
             {
+                int domainCnt = await _context.TblDomains.Where(t => t.Domain == tblDomain.Domain).CountAsync();
+                if (domainCnt > 0)
+                {
+                    ModelState.AddModelError("Domain", "Domain with this name already exists");
+                    return View(tblDomain);
+                }
                 _context.Add(tblDomain);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -66,7 +64,6 @@ namespace pline.Controllers
             return View(tblDomain);
         }
 
-        // GET: Domain/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -82,9 +79,6 @@ namespace pline.Controllers
             return View(tblDomain);
         }
 
-        // POST: Domain/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int? id, [Bind("Id,Domain,Description")] TblDomain tblDomain)
@@ -117,33 +111,14 @@ namespace pline.Controllers
             return View(tblDomain);
         }
 
-        // GET: Domain/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var tblDomain = await _context.TblDomains
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (tblDomain == null)
-            {
-                return NotFound();
-            }
-
-            return View(tblDomain);
-        }
-
-        // POST: Domain/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
             var tblDomain = await _context.TblDomains.FindAsync(id);
             _context.TblDomains.Remove(tblDomain);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            int result = await _context.SaveChangesAsync();
+            return Json(new { result = result });
         }
 
         private bool TblDomainExists(int? id)

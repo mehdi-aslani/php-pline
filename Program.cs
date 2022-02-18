@@ -17,8 +17,11 @@ builder.Services.AddSession(option =>
     option.IOTimeout = TimeSpan.FromMinutes(5);
 });
 
+// builder.Services.AddDbContext<PlineDbContext>(options =>
+//     options.UseNpgsql(builder.Configuration.GetConnectionString("postgresql")));
+
 builder.Services.AddDbContext<PlineDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("postgresql")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("SqliteDB")));
 
 builder.Services.AddIdentity<TblUser, IdentityRole>(options =>
     {
