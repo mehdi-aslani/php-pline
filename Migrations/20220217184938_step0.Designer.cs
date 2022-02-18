@@ -12,8 +12,8 @@ using pline.Data;
 namespace pline.Migrations
 {
     [DbContext(typeof(PlineDbContext))]
-    [Migration("20220216175201_TblUser_mig")]
-    partial class TblUser_mig
+    [Migration("20220217184938_step0")]
+    partial class step0
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -165,7 +165,6 @@ namespace pline.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int?>("Id"));
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)");
 
@@ -176,7 +175,10 @@ namespace pline.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TblDomain");
+                    b.HasIndex("Domain")
+                        .IsUnique();
+
+                    b.ToTable("TblDomains");
                 });
 
             modelBuilder.Entity("pline.Models.TblUser", b =>

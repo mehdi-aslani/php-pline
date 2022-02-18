@@ -1,0 +1,25 @@
+@using NonFactors.Mvc.Grid
+@model IQueryable<TblDomain>
+
+@(Html
+.Grid(Model)
+.Build(columns =>
+{
+columns.Add(model => model.Domain).Titled("Domain");
+columns.Add(model => model.Description).Titled("Description");
+})
+.Using(GridFilterMode.Row)
+.Empty("No data found")
+.Filterable()
+.Sortable()
+.Pageable(pager =>
+{
+pager.PageSizes = new Dictionary<Int32, String> {{ 10, "10" }, { 20, "20" }, { 50, "50" } , { 0, "All" }};
+pager.ShowPageSizes = true;
+pager.PagesToDisplay = 5;
+pager.CurrentPage = 1;
+pager.RowsPerPage = 10;
+})
+.Css("table table-secondary table-striped")
+//(model=>new {@class="table-dark"})
+)

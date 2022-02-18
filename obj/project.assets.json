@@ -1388,6 +1388,24 @@
           "lib/netstandard2.0/Newtonsoft.Json.dll": {}
         }
       },
+      "NonFactors.Grid.Core.Mvc6/7.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/Mvc.Grid.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net6.0/Mvc.Grid.Core.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
+      "NonFactors.Grid.Mvc6/7.0.0": {
+        "type": "package",
+        "dependencies": {
+          "NonFactors.Grid.Core.Mvc6": "[7.0.0]"
+        }
+      },
       "Npgsql/6.0.3": {
         "type": "package",
         "dependencies": {
@@ -5061,6 +5079,34 @@
         "newtonsoft.json.13.0.1.nupkg.sha512",
         "newtonsoft.json.nuspec",
         "packageIcon.png"
+      ]
+    },
+    "NonFactors.Grid.Core.Mvc6/7.0.0": {
+      "sha512": "yBJAt29MPQSGL67cmI8xNWUivJVKYVE4iOCgqd72jfufg+Ak9ut3NWXpBFtSErK5SMo+NhwzWlUgBQ38fDN0Gg==",
+      "type": "package",
+      "path": "nonfactors.grid.core.mvc6/7.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net6.0/Mvc.Grid.Core.dll",
+        "nonfactors.grid.core.mvc6.7.0.0.nupkg.sha512",
+        "nonfactors.grid.core.mvc6.nuspec"
+      ]
+    },
+    "NonFactors.Grid.Mvc6/7.0.0": {
+      "sha512": "6ymyUKu/7emJVY1SdGHfPRahJTGjN03Uw5IPwF5IEY11KAx6eHwwWc06fzSEbtgPZ7qru1IQOuh1Fjy+mYIPhw==",
+      "type": "package",
+      "path": "nonfactors.grid.mvc6/7.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "content/Views/Shared/MvcGrid/_Grid.cshtml",
+        "content/Views/Shared/MvcGrid/_Pager.cshtml",
+        "content/css/mvc-grid/fonts/grid-glyphs.woff",
+        "content/css/mvc-grid/mvc-grid.css",
+        "content/js/mvc-grid/mvc-grid.js",
+        "nonfactors.grid.mvc6.7.0.0.nupkg.sha512",
+        "nonfactors.grid.mvc6.nuspec"
       ]
     },
     "Npgsql/6.0.3": {
@@ -9253,6 +9299,7 @@
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 6.0.1",
       "Microsoft.EntityFrameworkCore.Design >= 6.0.1",
       "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 6.0.2",
+      "NonFactors.Grid.Mvc6 >= 7.0.0",
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 6.0.3"
     ]
   },
@@ -9306,6 +9353,10 @@
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
             "target": "Package",
             "version": "[6.0.2, )"
+          },
+          "NonFactors.Grid.Mvc6": {
+            "target": "Package",
+            "version": "[7.0.0, )"
           },
           "Npgsql.EntityFrameworkCore.PostgreSQL": {
             "target": "Package",

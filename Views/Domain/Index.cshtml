@@ -1,0 +1,12 @@
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h3>Domains</h3>
+<hr />
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Domain</a>
+</p>
+
+<br />
+@Html.AjaxGrid(Url.Action("Index","Domain"))

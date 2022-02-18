@@ -1,5 +1,4 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using Microsoft.AspNetCore.Http
 
 @inject SignInManager<TblUser> _signInManager
 @inject UserManager<TblUser> _userManage
@@ -18,10 +17,11 @@
     <link rel="stylesheet" href="~/lib/bootstrap/bootstrap-icons-1.5.0/bootstrap-icons.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/pline.styles.css" asp-append-version="true" />
+    <link href="~/css/mvc-grid/mvc-grid.css" rel="stylesheet">
 </head>
 
 <body>
-    <header>
+    <header class="mb-5">
         <nav class="navbar navbar-expand-md navbar-dark bg-dark">
             <div class="container-fluid">
                 <a class="navbar-brand" target="_blank" href="http://www.peeco.ir">P-Line</a>
@@ -39,7 +39,8 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="sip-menu">
                                 <li><a class="dropdown-item" href="#">SIP Profiles</a></li>
-                                <li><a class="dropdown-item" href="#">Domains</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Domain"
+                                        asp-action="Index">Domains</a></li>
                                 <li><a class="dropdown-item" href="#">SIP Trunk</a></li>
                                 <li><a class="dropdown-item" href="#">SIP Group</a></li>
                                 <li><a class="dropdown-item" href="#">SIP Users</a></li>
@@ -93,6 +94,10 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/mvc-grid/mvc-grid.js"></script>
+    <script>
+        document.querySelectorAll(".mvc-grid").forEach(element => new MvcGrid(element));
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 

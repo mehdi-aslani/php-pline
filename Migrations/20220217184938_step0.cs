@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace pline.Migrations
 {
-    public partial class Init : Migration
+    public partial class step0 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -55,17 +55,17 @@ namespace pline.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TblDomain",
+                name: "TblDomains",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Domain = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    Description = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false)
+                    Description = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TblDomain", x => x.Id);
+                    table.PrimaryKey("PK_TblDomains", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -210,6 +210,12 @@ namespace pline.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TblDomains_Domain",
+                table: "TblDomains",
+                column: "Domain",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -230,7 +236,7 @@ namespace pline.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "TblDomain");
+                name: "TblDomains");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

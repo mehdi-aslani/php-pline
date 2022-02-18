@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using pline.Data;
 using pline.Models;
+using pline.Tools;
 
 var builder = WebApplication.CreateBuilder(args);
 

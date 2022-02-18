@@ -52,6 +52,10 @@
               "target": "Package",
               "version": "[6.0.2, )"
             },
+            "NonFactors.Grid.Mvc6": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
               "version": "[6.0.3, )"

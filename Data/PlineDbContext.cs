@@ -12,10 +12,11 @@ public class PlineDbContext : IdentityDbContext<TblUser>
         // Database.EnsureCreated();
     }
 
-    // protected override void OnModelCreating(ModelBuilder builder)
-    // {
-    //     base.OnModelCreating(builder);
-    // }
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        TblDomain.OnModelCreating(builder);
+        base.OnModelCreating(builder);
+    }
 
     public DbSet<TblDomain> TblDomains { get; set; }
 }

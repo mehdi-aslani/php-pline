@@ -1,25 +1,27 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace pline.Models;
 
-[Table("TblDomain")]
+[Table("TblDomains")]
 public class TblDomain
 {
+    [Key]
     public int? Id { get; set; }
 
     [Required]
     [MaxLength(255)]
-    public string Domain { get; set; } = "domain";
+    public string? Domain { get; set; }
 
     [MaxLength(1024)]
-    public string Description { get; set; } = "";
+    public string? Description { get; set; }
 
-    public TblDomain()
+
+    public static void OnModelCreating(ModelBuilder builder)
     {
-        this.Domain = "$${doamin}";
-        this.Description = "";
-        this.Id = null;
+        builder.Entity<TblDomain>().HasIndex(t => t.Domain).IsUnique(true);
     }
 
 }
+

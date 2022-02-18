@@ -163,7 +163,6 @@ namespace pline.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int?>("Id"));
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(1024)
                         .HasColumnType("character varying(1024)");
 
@@ -174,7 +173,10 @@ namespace pline.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TblDomain");
+                    b.HasIndex("Domain")
+                        .IsUnique();
+
+                    b.ToTable("TblDomains");
                 });
 
             modelBuilder.Entity("pline.Models.TblUser", b =>

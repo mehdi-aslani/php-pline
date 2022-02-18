@@ -3,8 +3,9 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using pline.Data;
+using pline.Models;
 
-namespace pline.Models;
+namespace pline.Tools;
 
 public class Initializer
 {
@@ -21,13 +22,17 @@ public class Initializer
     {
         if (_context.TblDomains.LongCount() == 0)
         {
-            TblDomain domain = new TblDomain()
-            {
-                Domain = "$${domain}",
-                Description = "Default Domain"
-            };
 
-            _context.Add(domain);
+            for (int i = 0; i < 10000; i++)
+            {
+                TblDomain domain = new TblDomain()
+                {
+                    Domain = "$${domain} " + i,
+                    Description = "Default Domain " + i
+                };
+
+                _context.Add(domain);
+            }
             _context.SaveChanges();
         }
 

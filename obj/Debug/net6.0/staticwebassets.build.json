@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "oUfF8OUOaHKOYDugB7nDkzjAac5ev0eVlwXQd/sVE10=",
+  "Hash": "XvqJkROcGWXUDrJsu+/pnZom3IMMs8ByTIO8NvZu7fU=",
   "Source": "pline",
   "BasePath": "_content/pline",
   "Mode": "Default",
@@ -391,6 +391,40 @@
       "OriginalItemSpec": "wwwroot/css/font/Vazir-Thin-FD-WOL.woff2"
     },
     {
+      "Identity": "/home/aslani/Desktop/pline/wwwroot/css/mvc-grid/fonts/grid-glyphs.woff",
+      "SourceId": "pline",
+      "SourceType": "Discovered",
+      "ContentRoot": "/home/aslani/Desktop/pline/wwwroot/",
+      "BasePath": "_content/pline",
+      "RelativePath": "css/mvc-grid/fonts/grid-glyphs.woff",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/css/mvc-grid/fonts/grid-glyphs.woff"
+    },
+    {
+      "Identity": "/home/aslani/Desktop/pline/wwwroot/css/mvc-grid/mvc-grid.css",
+      "SourceId": "pline",
+      "SourceType": "Discovered",
+      "ContentRoot": "/home/aslani/Desktop/pline/wwwroot/",
+      "BasePath": "_content/pline",
+      "RelativePath": "css/mvc-grid/mvc-grid.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/css/mvc-grid/mvc-grid.css"
+    },
+    {
       "Identity": "/home/aslani/Desktop/pline/wwwroot/css/site.css",
       "SourceId": "pline",
       "SourceType": "Discovered",
@@ -423,6 +457,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/favicon.ico"
+    },
+    {
+      "Identity": "/home/aslani/Desktop/pline/wwwroot/js/mvc-grid/mvc-grid.js",
+      "SourceId": "pline",
+      "SourceType": "Discovered",
+      "ContentRoot": "/home/aslani/Desktop/pline/wwwroot/",
+      "BasePath": "_content/pline",
+      "RelativePath": "js/mvc-grid/mvc-grid.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/js/mvc-grid/mvc-grid.js"
     },
     {
       "Identity": "/home/aslani/Desktop/pline/wwwroot/js/site.js",
