@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using pline.Data;
 using pline.Models;
 using PlineFaxServer.Tools;
+using AspNetCoreHero.ToastNotification.Abstractions;
 
 namespace pline.Controllers;
 
@@ -16,13 +17,15 @@ public class UsersController : Controller
     private readonly PlineDbContext _context;
     private readonly SignInManager<TblUser> _signInManager;
     private readonly UserManager<TblUser> _userManager;
+    private readonly INotyfService _notifyService;
 
     public UsersController(PlineDbContext context, UserManager<TblUser> userManager,
-            SignInManager<TblUser> signInManager)
+            SignInManager<TblUser> signInManager, INotyfService notifyService)
     {
         _context = context;
         _userManager = userManager;
         _signInManager = signInManager;
+        _notifyService = notifyService;
     }
 
     // GET: Users
@@ -200,7 +203,7 @@ public class UsersController : Controller
                 var user = await _userManager.FindByNameAsync(login.Username);
                 if (user.Enable)
                 {
-                    HttpContext.Session.SetString(Globals.ToastInfo, "Welcome to P-Line VoIP Server");
+                    _notifyService.Success("Login successfully. Welcome to P-Line VoIP Server");
                     return RedirectToAction("Index", "Home");
                 }
                 else

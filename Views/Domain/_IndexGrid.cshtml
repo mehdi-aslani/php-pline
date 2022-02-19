@@ -8,14 +8,14 @@
 {
 columns.Add(model => model.Domain).Titled("Domain");
 columns.Add(model => model.Description).Titled("Description");
-columns.Add().Titled("Details").RenderedAs(model =>{
-return Html.ActionLink("Details","Details","Domain",new {id = model.Id},new {@class="btn btn-success btn-sm"});
+columns.Add().Titled("Details").Encoded(false).RenderedAs(model =>{
+return PlineHelper.ActionLink("<i class=\"bi bi-list-check\"></i>","Details","Domain",model.Id,"greenIcon");
 });
-columns.Add().Titled("Edit").RenderedAs(model =>{
-return Html.ActionLink("Edit","Edit","Domain",new {id = model.Id},new {@class="btn btn-warning btn-sm"});
+columns.Add().Titled("Edit").Encoded(false).RenderedAs(model =>{
+return PlineHelper.ActionLink("<i class=\"bi bi-pencil-square\"></i>","Edit","Domain",model.Id,"orangeIcon");
 });
 columns.Add().Titled("Delete").Encoded(false).RenderedAs(model =>{
-return PlineHelper.ActiveLinkAjax($"javascript:DeleteItem({model.Id})","Delete","btn btn-danger btn-sm");
+return PlineHelper.ActiveLinkAjax($"javascript:DeleteItem({model.Id})","<i class=\"bi bi-trash\"></i>","redIcon");
 });
 })
 .Using(GridFilterMode.Row)
@@ -33,4 +33,3 @@ pager.RowsPerPage = 10;
 .Css("table table-secondary table-striped")
 //(model=>new {@class="table-dark"})
 )
-

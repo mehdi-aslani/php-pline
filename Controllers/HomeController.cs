@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using pline.Models;
+using AspNetCoreHero.ToastNotification.Abstractions;
 
 namespace pline.Controllers;
 
@@ -9,10 +10,12 @@ namespace pline.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly INotyfService _notifyService;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, INotyfService notifyService)
     {
         _logger = logger;
+        _notifyService = notifyService;
     }
 
     public IActionResult Index()

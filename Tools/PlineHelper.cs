@@ -14,5 +14,13 @@ namespace pline.Tools
         {
             return $"<a href=\"{href}\" class=\"{css}\" title=\"{title}\">{text}</a>";
         }
+
+        public static string ActionLink(string text, string action, string controller, object? id, string css, string title = "")
+        {
+            if (id == null)
+                return $"<a href=\"{controller}/{action}\" class=\"{css}\" title=\"{title}\">{text}</a>";
+            return $"<a href=\"{controller}/{action}/{id}\" class=\"{css}\" title=\"{title}\">{text}</a>";
+        }
+
     }
 }

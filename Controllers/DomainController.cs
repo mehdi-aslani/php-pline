@@ -115,10 +115,15 @@ namespace pline.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
+
             var tblDomain = await _context.TblDomains.FindAsync(id);
+            if (tblDomain.Id == 1)
+            {
+                return Json(new { hasError = true, error = "You can't delete default domain." });
+            }
             _context.TblDomains.Remove(tblDomain);
             int result = await _context.SaveChangesAsync();
-            return Json(new { result = result });
+            return Json(new { hasError = result > 0, error = "No items were removed!" });
         }
 
         private bool TblDomainExists(int? id)

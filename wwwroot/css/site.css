@@ -95,3 +95,25 @@ body {
   color: #000;
   border-color: #ffffff;
 }
+
+.mvc-grid {
+  text-align: center;
+}
+
+.redIcon,
+.redIcon:before {
+  color: red;
+  font-size: 18pt;
+}
+
+.orangeIcon,
+.orangeIcon:before {
+  color: orange;
+  font-size: 18pt;
+}
+
+.greenIcon,
+.greenIcon:before {
+  color: green;
+  font-size: 18pt;
+}

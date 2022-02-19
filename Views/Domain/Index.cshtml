@@ -23,13 +23,13 @@
                 __RequestVerificationToken: "@GetAntiXsrfRequestToken()",
                 id: id
             }, function (data) {
-                if (data.result == 0) {
-                    showMyToast("@Globals.ToastError", "Error deleting information!");
+                if (data.hasError) {
+                    toastNotifyWarning(data.error, 5000);
                 } else {
                     location.reload();
                 }
             }, "JSON").fail(function (err) {
-                showMyToast("@Globals.ToastError", "Error in item removal operation");
+                toastNotifyError("Error connecting to server. Please contact the system administrator", 5000);
             });
         }
     }
