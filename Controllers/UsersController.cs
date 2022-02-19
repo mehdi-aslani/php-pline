@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using pline.Data;
 using pline.Models;
-using PlineFaxServer.Tools;
+using pline.Models.Users;
+using pline.Tools;
 using AspNetCoreHero.ToastNotification.Abstractions;
 
 namespace pline.Controllers;
@@ -221,11 +222,69 @@ public class UsersController : Controller
         return View(login);
     }
 
-    public IActionResult Logout()
+    public async Task<IActionResult> Logout()
     {
-        _signInManager.SignOutAsync();
+        await _signInManager.SignOutAsync();
         return RedirectToAction("Login");
     }
+
+    public IActionResult ChangePassword()
+    {
+        return View();
+    }
+
+    [ActionName("ChangePassword"), HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChangePasswordConfirm([Bind("OldPassword,Password,RepPassword")]
+            ChangePassword changePassword)
+    {
+        ViewBag.Ok = false;
+        if (ModelState.IsValid)
+        {
+            var curUser = await _userManager.GetUserAsync(User);
+            var passResult =
+                _userManager.PasswordHasher.VerifyHashedPassword(curUser, curUser.PasswordHash,
+                    changePassword.OldPassword);
+            if (passResult == PasswordVerificationResult.Failed)
+            {
+                ModelState.AddModelError("OldPassword", "The password entered is incorrect");
+                return View(new ChangePassword());
+            }
+
+            if (changePassword.Password == null
+                || changePassword.RepPassword == null
+                || !changePassword.Password.Equals(changePassword.RepPassword,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                ModelState.AddModelError("RepPassword", "The password entered does not match the repetition.");
+                return View(new ChangePassword());
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(curUser);
+            var resetPassResult =
+                await _userManager.ResetPasswordAsync(curUser, token, changePassword.Password);
+            if (resetPassResult.Succeeded)
+            {
+                await _userManager.UpdateAsync(curUser);
+                ViewBag.Ok = true;
+            }
+            else
+            {
+                ModelState.AddModelError("", "User edit error");
+                foreach (var item in resetPassResult.Errors)
+                {
+
+                    ModelState.AddModelError("", item.Description);
+                }
+            }
+
+            return View(new ChangePassword());
+        }
+
+        return View(new ChangePassword());
+    }
+
+
 
 }
 

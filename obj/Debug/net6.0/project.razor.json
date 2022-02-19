@@ -16392,6 +16392,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "/home/aslani/Projects/pline/Views/Users/ChangePassword.cshtml",
+      "TargetPath": "Views\\Users\\ChangePassword.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/home/aslani/Projects/pline/Views/Shared/MvcGrid/_Grid.cshtml",
       "TargetPath": "Views\\Shared\\MvcGrid\\_Grid.cshtml",
       "FileKind": "mvc"
