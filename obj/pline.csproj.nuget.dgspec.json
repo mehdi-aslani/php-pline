@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/aslani/Projects/pline/pline.csproj": {}
+    "D:\\pline\\pline.csproj": {}
   },
   "projects": {
-    "/home/aslani/Projects/pline/pline.csproj": {
+    "D:\\pline\\pline.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/aslani/Projects/pline/pline.csproj",
+        "projectUniqueName": "D:\\pline\\pline.csproj",
         "projectName": "pline",
-        "projectPath": "/home/aslani/Projects/pline/pline.csproj",
-        "packagesPath": "/home/aslani/.nuget/packages/",
-        "outputPath": "/home/aslani/Projects/pline/obj/",
+        "projectPath": "D:\\pline\\pline.csproj",
+        "packagesPath": "C:\\Users\\Aslani-Laptop\\.nuget\\packages\\",
+        "outputPath": "D:\\pline\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/aslani/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\Aslani-Laptop\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
@@ -87,7 +87,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/6.0.200/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.200\\RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -2,6 +2,7 @@
 
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using pline.Data;
 using pline.Models;
 
@@ -20,15 +21,18 @@ public class Initializer
 
     public void Initialize()
     {
+        _context.Database.ExecuteSqlRaw("DELETE FROM TblDomains");
         if (_context.TblDomains.LongCount() == 0)
         {
-
-            TblDomain domain = new TblDomain()
+            for (int i = 0; i < 100; i++)
             {
-                Domain = "$${domain}",
-                Description = "Default Domain"
-            };
-            _context.Add(domain);
+                TblDomain domain = new TblDomain()
+                {
+                    Domain = "$${domain}" + i,
+                    Description = "Default Domain" + i
+                };
+                _context.Add(domain);
+            }
             _context.SaveChanges();
         }
 
