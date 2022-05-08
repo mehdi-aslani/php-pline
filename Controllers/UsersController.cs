@@ -1,290 +1,185 @@
-#nullable disable
+
+
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using pline.Data;
-using pline.Models;
-using pline.Models.Users;
-using pline.Tools;
-using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.IdentityModel.Tokens;
+using Pline.Models.Users;
+using Pline.Tools;
+using static Pline.Tools.Response;
 
-namespace pline.Controllers;
+namespace Pline.Controllers;
 
+[ApiController]
+[Route("[controller]")]
 [Authorize]
-public class UsersController : Controller
+public class UsersController : ControllerBase
 {
-    private readonly PlineDbContext _context;
-    private readonly SignInManager<TblUser> _signInManager;
+
     private readonly UserManager<TblUser> _userManager;
-    private readonly INotyfService _notifyService;
+    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly IConfiguration _configuration;
 
-    public UsersController(PlineDbContext context, UserManager<TblUser> userManager,
-            SignInManager<TblUser> signInManager, INotyfService notifyService)
+    public UsersController(
+        UserManager<TblUser> userManager,
+        RoleManager<IdentityRole> roleManager,
+        IConfiguration configuration)
     {
-        _context = context;
         _userManager = userManager;
-        _signInManager = signInManager;
-        _notifyService = notifyService;
+        _roleManager = roleManager;
+        _configuration = configuration;
     }
 
-    // GET: Users
-    public async Task<IActionResult> Index()
-    {
-        return View(await _context.Users.ToListAsync());
-    }
-
-    // GET: Users/Details/5
-    public async Task<IActionResult> Details(string id)
-    {
-        if (id == null)
-        {
-            return NotFound();
-        }
-
-        var tblUser = await _context.Users
-            .FirstOrDefaultAsync(m => m.Id == id);
-        if (tblUser == null)
-        {
-            return NotFound();
-        }
-
-        return View(tblUser);
-    }
-
-    // GET: Users/Create
-    public IActionResult Create()
-    {
-        return View();
-    }
-
-    // POST: Users/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("FirstName,LastName,Enable,Role,Description,Id,UserName,NormalizedUserName,Email,NormalizedEmail,EmailConfirmed,PasswordHash,SecurityStamp,ConcurrencyStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEnd,LockoutEnabled,AccessFailedCount")] TblUser tblUser)
-    {
-        if (ModelState.IsValid)
-        {
-            _context.Add(tblUser);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-        return View(tblUser);
-    }
-
-    // GET: Users/Edit/5
-    public async Task<IActionResult> Edit(string id)
-    {
-        if (id == null)
-        {
-            return NotFound();
-        }
-
-        var tblUser = await _context.Users.FindAsync(id);
-        if (tblUser == null)
-        {
-            return NotFound();
-        }
-        return View(tblUser);
-    }
-
-    // POST: Users/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(string id, [Bind("FirstName,LastName,Enable,Role,Description,Id,UserName,NormalizedUserName,Email,NormalizedEmail,EmailConfirmed,PasswordHash,SecurityStamp,ConcurrencyStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEnd,LockoutEnabled,AccessFailedCount")] TblUser tblUser)
-    {
-        if (id != tblUser.Id)
-        {
-            return NotFound();
-        }
-
-        if (ModelState.IsValid)
-        {
-            try
-            {
-                _context.Update(tblUser);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TblUserExists(tblUser.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return RedirectToAction(nameof(Index));
-        }
-        return View(tblUser);
-    }
-
-    // GET: Users/Delete/5
-    public async Task<IActionResult> Delete(string id)
-    {
-        if (id == null)
-        {
-            return NotFound();
-        }
-
-        var tblUser = await _context.Users
-            .FirstOrDefaultAsync(m => m.Id == id);
-        if (tblUser == null)
-        {
-            return NotFound();
-        }
-
-        return View(tblUser);
-    }
-
-    // POST: Users/Delete/5
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(string id)
-    {
-        var tblUser = await _context.Users.FindAsync(id);
-        _context.Users.Remove(tblUser);
-        await _context.SaveChangesAsync();
-        return RedirectToAction(nameof(Index));
-    }
-
-    private bool TblUserExists(string id)
-    {
-        return _context.Users.Any(e => e.Id == id);
-    }
-
+    [Route("login")]
     [AllowAnonymous]
-    [HttpPost, HttpGet]
-    public async Task<IActionResult> Login(LoginPage login)
+    public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
-        //await _signInManager.SignOutAsync();
-        if (login.Username == null || login.Password == null)
+        var user = await _userManager.FindByNameAsync(model.Username);
+        if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
         {
-            ModelState.Clear();
-            return View(login);
-        }
+            var userRoles = await _userManager.GetRolesAsync(user);
 
-        var admin = _userManager.FindByNameAsync("admin");
-        if (admin.Result == null)
-        {
-            TblUser tblUser = new TblUser()
-            {
-                FirstName = "Administrator",
-                LastName = "",
-                UserName = "admin",
-                Email = "admin@localhost.local",
-                Enable = true,
-
-            };
-            var resultUser = await _userManager.CreateAsync(tblUser, "Admin@123");
-            if (resultUser != IdentityResult.Success)
-            {
-                ModelState.AddModelError("", "Runtime Error");
-            }
-            await _userManager.AddClaimAsync(tblUser, new Claim(ClaimTypes.Role, "Admin"));
-        }
-
-        if (ModelState.IsValid)
-        {
-            var result =
-                await _signInManager.PasswordSignInAsync(login.Username, login.Password, login.RememberMe, true);
-            if (result.IsLockedOut)
-            {
-                ModelState.AddModelError("Username", "The user is temporarily disabled");
-            }
-            else if (result.Succeeded)
-            {
-                var user = await _userManager.FindByNameAsync(login.Username);
-                if (user.Enable)
+            var authClaims = new List<Claim>
                 {
-                    _notifyService.Success("Login successfully. Welcome to P-Line VoIP Server");
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Your account has been disabled. Please contact the system administrator");
-                }
-            }
-            else
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                };
+
+            foreach (var userRole in userRoles)
             {
-                ModelState.AddModelError("", "Username or password is incorrect");
+                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
             }
+
+            var token = GetToken(authClaims);
+
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                expiration = token.ValidTo,
+                status = ResponseStatus.Success,
+                isAuth = true,
+                username = model.Username,
+                messages = "Login Successfully",
+            });
         }
-
-        login.RememberMe = true;
-        return View(login);
-    }
-
-    public async Task<IActionResult> Logout()
-    {
-        await _signInManager.SignOutAsync();
-        return RedirectToAction("Login");
-    }
-
-    public IActionResult ChangePassword()
-    {
-        return View();
-    }
-
-    [ActionName("ChangePassword"), HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ChangePasswordConfirm([Bind("OldPassword,Password,RepPassword")]
-            ChangePassword changePassword)
-    {
-        ViewBag.Ok = false;
-        if (ModelState.IsValid)
+        //return Unauthorized();
+        return Ok(new Response
         {
-            var curUser = await _userManager.GetUserAsync(User);
-            var passResult =
-                _userManager.PasswordHasher.VerifyHashedPassword(curUser, curUser.PasswordHash,
-                    changePassword.OldPassword);
-            if (passResult == PasswordVerificationResult.Failed)
-            {
-                ModelState.AddModelError("OldPassword", "The password entered is incorrect");
-                return View(new ChangePassword());
-            }
-
-            if (changePassword.Password == null
-                || changePassword.RepPassword == null
-                || !changePassword.Password.Equals(changePassword.RepPassword,
-                    StringComparison.OrdinalIgnoreCase))
-            {
-                ModelState.AddModelError("RepPassword", "The password entered does not match the repetition.");
-                return View(new ChangePassword());
-            }
-
-            var token = await _userManager.GeneratePasswordResetTokenAsync(curUser);
-            var resetPassResult =
-                await _userManager.ResetPasswordAsync(curUser, token, changePassword.Password);
-            if (resetPassResult.Succeeded)
-            {
-                await _userManager.UpdateAsync(curUser);
-                ViewBag.Ok = true;
-            }
-            else
-            {
-                ModelState.AddModelError("", "User edit error");
-                foreach (var item in resetPassResult.Errors)
-                {
-
-                    ModelState.AddModelError("", item.Description);
-                }
-            }
-
-            return View(new ChangePassword());
-        }
-
-        return View(new ChangePassword());
+            Status = ResponseStatus.Error,
+            Messages = new List<string>() { "Username and Password Incorrect!" }
+        });
     }
 
+    [HttpPost]
+    [Route("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterModel model)
+    {
+        var userExists = await _userManager.FindByNameAsync(model.Username);
+        if (userExists != null)
+            return StatusCode(StatusCodes.Status500InternalServerError, new Response
+            {
+                Status = ResponseStatus.Error,
+                Messages = new List<string>() { "User already exists!" }
+            }
+        );
+
+        TblUser user = new()
+        {
+            Email = $"{model.Username}@licalhost.local",
+            SecurityStamp = Guid.NewGuid().ToString(),
+            UserName = model.Username,
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+            Enable = model.Enable,
+            Role = UserRoles.Admin,
+            Description = model.Description
+        };
+        var result = await _userManager.CreateAsync(user, model.Password);
+        if (!result.Succeeded)
+            return StatusCode(StatusCodes.Status500InternalServerError, new Response
+            {
+                Status = ResponseStatus.Error,
+                Messages = new List<string>(){
+                 "User creation failed! Please check user details and try again."
+            }
+            });
+
+        return Ok(new Response
+        {
+            Status = ResponseStatus.Success,
+            Messages = new List<string>() { "User created successfully!" }
+        });
+    }
+
+    [HttpPost]
+    [Route("register-admin")]
+    public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
+    {
+        var userExists = await _userManager.FindByNameAsync(model.Username);
+        if (userExists != null)
+            return StatusCode(StatusCodes.Status500InternalServerError, new Response
+            {
+                Status = ResponseStatus.Error,
+                Messages = new List<string>() { "User already exists!" }
+            });
+
+        TblUser user = new()
+        {
+            Email = $"{model.Username}@licalhost.local",
+            SecurityStamp = Guid.NewGuid().ToString(),
+            UserName = model.Username,
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+            Enable = model.Enable,
+            Role = UserRoles.Admin,
+            Description = model.Description
+        };
+        var result = await _userManager.CreateAsync(user, model.Password);
+        if (!result.Succeeded)
+            return StatusCode(StatusCodes.Status500InternalServerError, new Response
+            {
+                Status = ResponseStatus.Error,
+                Messages = new List<string>() { "User creation failed! Please check user details and try again." }
+            });
+
+        if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
+            await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+        if (!await _roleManager.RoleExistsAsync(UserRoles.User))
+            await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+
+        if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
+        {
+            await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+        }
+        if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
+        {
+            await _userManager.AddToRoleAsync(user, UserRoles.User);
+        }
+        return Ok(new Response
+        {
+            Status = ResponseStatus.Success,
+            Messages = new List<string>() { "User created successfully!" }
+        });
+    }
+
+    private JwtSecurityToken GetToken(List<Claim> authClaims)
+    {
+        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+
+        var token = new JwtSecurityToken(
+            issuer: _configuration["JWT:ValidIssuer"],
+            audience: _configuration["JWT:ValidAudience"],
+            expires: DateTime.Now.AddHours(3),
+            claims: authClaims,
+            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+            );
+
+        return token;
+    }
 
 
 }
-

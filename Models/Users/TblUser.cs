@@ -1,9 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
-namespace pline.Models;
 
-[Table("TblUsers")]
+namespace Pline.Models.Users;
 public class TblUser : IdentityUser
 {
     [Display(Name = "First Name")]
@@ -23,4 +22,5 @@ public class TblUser : IdentityUser
     [MaxLength(256)]
     [Display(Name = "Description")]
     public string Description { get; set; } = "";
+
 }

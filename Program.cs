@@ -1,30 +1,29 @@
-using AspNetCoreHero.ToastNotification;
-using AspNetCoreHero.ToastNotification.Extensions;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using pline.Data;
-using pline.Models;
-using pline.Tools;
+using Microsoft.IdentityModel.Tokens;
+using Pline.Data;
+using Pline.Models.Users;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+IConfiguration configuration = builder.Configuration;
 
-builder.Services.AddControllersWithViews();
-builder.Services.AddDistributedMemoryCache(); //memory is configured for caching.
-builder.Services.AddSession(option =>
-{
-    option.IOTimeout = TimeSpan.FromMinutes(5);
-});
 
-// builder.Services.AddDbContext<PlineDbContext>(options =>
-//     options.UseNpgsql(builder.Configuration.GetConnectionString("postgresql")));
+builder.Services.AddCors();
 
-builder.Services.AddDbContext<PlineDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("SqliteDB")));
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<PlineContext>(options =>
+    options.UseSqlite(configuration.GetConnectionString("PlineSqlite"))
+);
 
+// For Identity
 builder.Services.AddIdentity<TblUser, IdentityRole>(options =>
     {
         // Password settings.
@@ -42,59 +41,54 @@ builder.Services.AddIdentity<TblUser, IdentityRole>(options =>
         options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
         options.User.RequireUniqueEmail = false;
     })
-    .AddEntityFrameworkStores<PlineDbContext>()
+    .AddEntityFrameworkStores<PlineContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    // Cookie settings
-    options.Cookie.HttpOnly = true;
-    options.Cookie.Name = "P-line-VoIP-Server";
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-    options.LoginPath = "/Users/Login";
-    options.AccessDeniedPath = "/Users/AccessDenied";
-    options.SlidingExpiration = true;
-});
-
+// Adding Authentication
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-}).AddCookie();
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
 
-builder.Services.AddTransient<Initializer>();
-builder.Services.AddNotyf(config => { config.DurationInSeconds = 5; config.IsDismissable = true; config.Position = NotyfPosition.TopLeft; });
+// Adding Jwt Bearer
+.AddJwtBearer(options =>
+{
+    options.SaveToken = true;
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidAudience = configuration.GetSection("JWT").GetValue<string>("ValidAudience"),
+        ValidIssuer = configuration.GetSection("JWT").GetValue<string>("ValidIssuer"),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetSection("JWT").GetValue<string>("Secret")))
+    };
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
-
-
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseRouting();
 
+// global cors policy
+app.UseCors(x => x
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .SetIsOriginAllowed(origin => true) // allow any origin
+    .AllowCredentials()); // allow credentials
+
+// Authentication & Authorization
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseNotyf();
-var scopedFactory = app.Services.GetService<IServiceScopeFactory>();
-using (var scope = scopedFactory?.CreateAsyncScope())
-{
-    var service = scope?.ServiceProvider.GetService<Initializer>();
-    service?.Initialize();
-}
 
-app.UseStatusCodePagesWithRedirects("/Home/Error/{0}");
-app.UseSession();
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-
+app.MapControllers();
 
 app.Run();
-
