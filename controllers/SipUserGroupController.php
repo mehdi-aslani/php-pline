@@ -2,17 +2,16 @@
 
 namespace app\controllers;
 
-use app\models\sip_profiles\TblSipProfiles;
-use app\models\sip_profiles\TblSipProfilesSearch;
+use app\models\sip_user_groups\TblSipUsersGroups;
+use app\models\sip_user_groups\TblSipUsersGroupsSearch;
 use app\pline\customs\PlineActiveController;
-use Yii;
 
-class SipProfileController extends PlineActiveController
+class SipUserGroupController extends PlineActiveController
 {
 
     public $enableCsrfValidation = false;
 
-    public $modelClass = TblSipProfiles::class;
+    public $modelClass = TblSipUsersGroups::class;
 
     public $serializer = [
         'class' => \yii\rest\Serializer::class,
@@ -23,36 +22,19 @@ class SipProfileController extends PlineActiveController
     {
         $actions = parent::actions();
         $actions['index']['prepareDataProvider'] = function ($action) {
-            $model = new  TblSipProfilesSearch();
+            $model = new  TblSipUsersGroupsSearch();
             $query = $model->search(\Yii::$app->request->queryParams);
             $query->sort->defaultOrder = ['id' => SORT_ASC];
             $query->pagination->defaultPageSize = 10;
             return $query;
         };
-        unset($actions['delete']);
 
         return $actions;
     }
 
-    public function actionDelete($id)
+    public function actionGetSipGroups()
     {
-        $model = TblSipProfiles::findOne(['id' => $id]);
-        $model->delete();
-        Yii::$app->response->statusCode = 200;
-        return;
-
-        Yii::$app->response->statusCode = 422;
-        return [
-            [
-                "field" => "name",
-                "message" => "It is not possible to delete this item because it is used."
-            ]
-        ];
-    }
-
-    public function actionGetProfiles()
-    {
-        $model = TblSipProfiles::find()
+        $model = TblSipUsersGroups::find()
             ->select(['value' => 'id', 'label' => 'name'])
             ->where(['enable' => true])
             ->asArray()

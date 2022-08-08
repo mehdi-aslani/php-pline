@@ -61,9 +61,40 @@ $config = [
 
                     ]
                 ],
-                ['class' => 'yii\rest\UrlRule', 'controller' => 'spp'],
+                [
+                    'class' => 'yii\rest\UrlRule', 'controller' => 'spp',
+                    'extraPatterns' => [
+                        'GET get-all' => 'get-all',
+                        'OPTIONS get-all' => 'options',
+                    ]
+                ],
                 ['class' => 'yii\rest\UrlRule', 'controller' => 'variable'],
-                ['class' => 'yii\rest\UrlRule', 'controller' => 'sip-profile'],
+                [
+                    'class' => 'yii\rest\UrlRule', 'controller' => 'sip-profile',
+                    'extraPatterns' => [
+                        'GET get-profiles' => 'get-profiles',
+                        'OPTIONS get-profiles' => 'options',
+                    ]
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule', 'controller' => 'sip-trunk',
+                    'extraPatterns' => []
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule', 'controller' => 'sip-user-group',
+                    'extraPatterns' => [
+                        'GET get-sip-Groups' => 'get-sip-groups',
+                        'OPTIONS get-sip-groups' => 'options',
+                    ]
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule', 'controller' => 'sip-user',
+                    'extraPatterns' => [
+                        'GET get-sip-user-options' => 'get-sip-user-options',
+                        'OPTIONS get-sip-user-options' => 'options',
+                    ]
+                ],
+
             ],
         ],
         'jwt' => [

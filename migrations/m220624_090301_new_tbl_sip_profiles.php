@@ -16,6 +16,7 @@ class m220624_090301_new_tbl_sip_profiles extends Migration
             'id' => $this->primaryKey(),
             'name' => $this->string()->unique()->notNull(),
             'description' => $this->string()->defaultValue('')->notNull(),
+            'parameters' => $this->string(1024 * 3)->notNull(),
             'enable' => $this->boolean()->defaultValue(true)->notNull(),
         ]);
     }

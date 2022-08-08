@@ -2,16 +2,18 @@
 
 namespace app\controllers;
 
-use app\models\sip_profile_parameters\TblSipProfileParameters;
-use app\models\sip_profile_parameters\TblSipProfileParametersSearch;
+use app\models\sip_profiles\TblSipProfiles;
+use app\models\sip_trunks\TblSipTrunks;
+use app\models\sip_trunks\TblSipTrunksSearch;
 use app\pline\customs\PlineActiveController;
+use Yii;
 
-class SppController extends PlineActiveController
+class SipTrunkController extends PlineActiveController
 {
 
     public $enableCsrfValidation = false;
 
-    public $modelClass = TblSipProfileParameters::class;
+    public $modelClass = TblSipTrunks::class;
 
     public $serializer = [
         'class' => \yii\rest\Serializer::class,
@@ -22,21 +24,12 @@ class SppController extends PlineActiveController
     {
         $actions = parent::actions();
         $actions['index']['prepareDataProvider'] = function ($action) {
-            $model = new  TblSipProfileParametersSearch();
+            $model = new  TblSipTrunksSearch();
             $query = $model->search(\Yii::$app->request->queryParams);
             $query->sort->defaultOrder = ['id' => SORT_ASC];
             $query->pagination->defaultPageSize = 10;
             return $query;
         };
-
         return $actions;
-    }
-    public function actionGetAll()
-    {
-        $model = TblSipProfileParameters::find()
-            ->orderBy(['name' => SORT_ASC])
-            ->asArray()
-            ->all();
-        return $model;
     }
 }

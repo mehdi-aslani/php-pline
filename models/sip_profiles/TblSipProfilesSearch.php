@@ -4,12 +4,11 @@ namespace app\models\sip_profiles;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\sip_profiles\TblSipProfiles;
 
 /**
- * TblSipProfilesSerach represents the model behind the search form of `app\models\sip_profiles\TblSipProfiles`.
+ * TblSipProfilesSearch represents the model behind the search form of `app\models\sipProfiles\TblSipProfiles`.
  */
-class TblSipProfilesSerach extends TblSipProfiles
+class TblSipProfilesSearch extends TblSipProfiles
 {
     /**
      * {@inheritdoc}
@@ -18,7 +17,7 @@ class TblSipProfilesSerach extends TblSipProfiles
     {
         return [
             [['id'], 'integer'],
-            [['name', 'description'], 'safe'],
+            [['name', 'description', 'parameters'], 'safe'],
             [['enable'], 'boolean'],
         ];
     }
@@ -64,7 +63,8 @@ class TblSipProfilesSerach extends TblSipProfiles
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'description', $this->description]);
+            ->andFilterWhere(['like', 'description', $this->description])
+            ->andFilterWhere(['like', 'parameters', $this->parameters]);
 
         return $dataProvider;
     }

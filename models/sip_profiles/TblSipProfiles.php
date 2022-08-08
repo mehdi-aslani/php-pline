@@ -10,6 +10,7 @@ use Yii;
  * @property int $id
  * @property string $name
  * @property string $description
+ * @property string $parameters
  * @property bool $enable
  */
 class TblSipProfiles extends \yii\db\ActiveRecord
@@ -28,11 +29,24 @@ class TblSipProfiles extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name'], 'required'],
+            [['name',], 'required'],
             [['enable'], 'boolean'],
             [['name', 'description'], 'string', 'max' => 255],
             [['name'], 'unique'],
+            [['parameters'], 'ValodationParameter'],
+            [['parameters'], 'string', 'max' => 3072],
         ];
+    }
+
+    public function ValodationParameter()
+    {
+        $params = json_encode($this->parameters);
+        if ($params) {
+            $this->parameters = $params;
+            return true;
+        }
+        $this->addError("parameters", "Parameters must be a string.");
+        return false;
     }
 
     /**
@@ -44,6 +58,7 @@ class TblSipProfiles extends \yii\db\ActiveRecord
             'id' => 'ID',
             'name' => 'Name',
             'description' => 'Description',
+            'parameters' => 'Parameters',
             'enable' => 'Enable',
         ];
     }
